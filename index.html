@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="300" />
+  <title>VM 2026 - Matcher & Resultat</title>
+  <style>
+    :root {
+      --bg: #061526;
+      --panel: #0b2239;
+      --panel2: #0e2d4d;
+      --text: #ffffff;
+      --muted: #b8c7d9;
+      --accent: #00d084;
+      --accent2: #2ea8ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 10% 15%, rgba(46,168,255,.18), transparent 32%),
+        radial-gradient(circle at 85% 20%, rgba(0,208,132,.12), transparent 30%),
+        linear-gradient(135deg, #03101f 0%, #071a2e 55%, #03101f 100%);
+    }
+
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      padding: 28px 34px;
+      display: grid;
+      grid-template-rows: 104px 1fr 42px;
+      gap: 22px;
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+      padding: 0 28px;
+      border-radius: 24px;
+      background: linear-gradient(90deg, rgba(13,55,95,.92), rgba(0,85,142,.72));
+      box-shadow: 0 18px 45px rgba(0,0,0,.28);
+      border: 1px solid rgba(255,255,255,.10);
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .ball {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.12);
+      font-size: 36px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+      letter-spacing: .2px;
+      line-height: 1.05;
+    }
+
+    .subtitle {
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .clockBox {
+      text-align: right;
+      min-width: 260px;
+    }
+
+    #clock {
+      font-size: 42px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    #date {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: 1.42fr .9fr;
+      gap: 22px;
+      min-height: 0;
+    }
+
+    .panel {
+      min-height: 0;
+      border-radius: 24px;
+      background: rgba(8, 30, 53, .86);
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: 0 18px 45px rgba(0,0,0,.24);
+      overflow: hidden;
+      display: grid;
+      grid-template-rows: 66px 1fr;
+    }
+
+    .panelHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 0 24px;
+      background: rgba(255,255,255,.055);
+      border-bottom: 1px solid rgba(255,255,255,.09);
+    }
+
+    .panelTitle {
+      font-size: 25px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .badge {
+      color: #001b26;
+      background: var(--accent);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+
+    .iframeWrap {
+      min-height: 0;
+      width: 100%;
+      height: 100%;
+      background: #061526;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: transparent;
+    }
+
+    .rightCol {
+      min-height: 0;
+      display: grid;
+      grid-template-rows: .92fr .58fr;
+      gap: 22px;
+    }
+
+    .notice {
+      padding: 20px 24px;
+      display: grid;
+      align-content: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0,208,132,.12), rgba(46,168,255,.08));
+    }
+
+    .notice h2 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .notice p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 19px;
+      line-height: 1.35;
+    }
+
+    footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      font-size: 16px;
+      padding: 0 8px;
+    }
+
+    .pulse {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      color: #cfeee0;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 0 rgba(0,208,132,.75);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(0,208,132,.75); }
+      70% { box-shadow: 0 0 0 12px rgba(0,208,132,0); }
+      100% { box-shadow: 0 0 0 0 rgba(0,208,132,0); }
+    }
+
+    @media (max-width: 1100px) {
+      body { overflow: auto; }
+      .screen { height: auto; min-height: 100vh; grid-template-rows: auto auto auto; }
+      main { grid-template-columns: 1fr; }
+      .panel { min-height: 560px; }
+      .rightCol { grid-template-rows: 520px auto; }
+      header { grid-template-columns: 1fr; padding: 22px; }
+      .clockBox { text-align: left; }
+    }
+  </style>
+</head>
+<body>
+  <div class="screen">
+    <header>
+      <div class="title">
+        <div class="ball">⚽</div>
+        <div>
+          <h1>VM 2026 – Matcher & Resultat</h1>
+          <div class="subtitle">Automatiskt uppdaterad vy för PLAYipp och informationsskärm</div>
+        </div>
+      </div>
+      <div class="clockBox">
+        <div id="clock">--:--</div>
+        <div id="date">Laddar datum...</div>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel">
+        <div class="panelHeader">
+          <div class="panelTitle">🏆 VM 2026 – spelschema</div>
+          <div class="badge">Auto</div>
+        </div>
+        <div class="iframeWrap">
+          <iframe
+            src="https://www.sportbusy.com/embed/world-cup?theme=dark&compact=1"
+            title="VM 2026 matcher och resultat"
+            loading="eager"
+            referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+      </section>
+
+      <div class="rightCol">
+        <section class="panel">
+          <div class="panelHeader">
+            <div class="panelTitle">🔴 Live just nu</div>
+            <div class="badge">Live</div>
+          </div>
+          <div class="iframeWrap">
+            <iframe
+              src="https://www.sportbusy.com/embed?live=1&theme=dark&compact=1"
+              title="Live-resultat fotboll"
+              loading="eager"
+              referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+        </section>
+
+        <section class="panel notice">
+          <h2>Uppdateras automatiskt</h2>
+          <p>Matchlistor, kommande matcher och resultat hämtas från inbäddade sportwidgets. Sidan laddar även om var 5:e minut för extra stabilitet i PLAYipp.</p>
+          <p class="pulse"><span class="dot"></span> Redo för helskärm 1920×1080</p>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div>Data/widget: SportBusy. Behåll deras credit i widgeten.</div>
+      <div id="updated">Senast uppdaterad: --:--</div>
+    </footer>
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleTimeString('sv-SE', {
+        hour: '2-digit', minute: '2-digit'
+      });
+      document.getElementById('date').textContent = now.toLocaleDateString('sv-SE', {
+        weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+      });
+      document.getElementById('updated').textContent = 'Senast uppdaterad: ' + now.toLocaleTimeString('sv-SE', {
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    updateClock();
+    setInterval(updateClock, 10000);
+  </script>
+</body>
+</html>
