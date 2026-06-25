@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VM 2026 - PLAYipp Live</title>
+<style>
+:root{
+  --bg:#06101f;--panel:#0d1f37;--panel2:#132a46;--line:rgba(255,255,255,.12);
+  --text:#f7fbff;--muted:#a8c8ec;--blue:#66b9ff;--green:#54e3a4;--yellow:#ffd166;--red:#ff595e;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{
+  font-family:Arial,Helvetica,sans-serif;color:var(--text);
+  background:
+    radial-gradient(circle at 8% 10%,rgba(70,154,235,.34),transparent 32%),
+    radial-gradient(circle at 90% 20%,rgba(84,227,164,.16),transparent 28%),
+    linear-gradient(135deg,#06101f,#08172a 58%,#040b15);
+}
+.page{height:100vh;width:100vw;padding:34px 38px 26px;display:grid;grid-template-rows:106px 1fr 34px;gap:20px}
+header{display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:22px}
+.logo{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;font-size:38px;background:linear-gradient(135deg,#ecf8ff,#8ccbff);box-shadow:0 18px 55px rgba(102,185,255,.25)}
+h1{margin:0;font-size:55px;line-height:.9}.sub{font-size:24px;color:var(--muted);margin-top:12px}
+.clock{text-align:right}.time{font-size:58px;font-weight:900;line-height:1}.date{font-size:22px;color:var(--muted);margin-top:10px}
+main{min-height:0;display:grid;grid-template-columns:1.16fr .84fr;gap:24px}
+.left{min-height:0;display:grid;grid-template-rows:1fr 266px;gap:18px}
+.right{min-height:0;display:grid;grid-template-rows:250px 1fr;gap:24px}
+.panel{min-height:0;background:rgba(13,31,55,.94);border:1px solid var(--line);border-radius:30px;box-shadow:0 25px 80px rgba(0,0,0,.32);overflow:hidden;display:flex;flex-direction:column}
+.head{padding:24px 28px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.title{font-size:30px;font-weight:900;display:flex;align-items:center;gap:12px}
+.badge{border-radius:999px;padding:9px 14px;font-size:15px;font-weight:900;background:rgba(84,227,164,.16);border:1px solid rgba(84,227,164,.40);color:#baffdf}
+.badge.warn{background:rgba(255,209,102,.14);border-color:rgba(255,209,102,.35);color:#ffe6a0}
+.content{padding:18px 22px;min-height:0;overflow:hidden;flex:1}
+.matchList{display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.match{background:linear-gradient(90deg,rgba(255,255,255,.065),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:14px 18px;display:grid;grid-template-columns:96px 1fr 116px;gap:14px;align-items:center;min-height:78px}
+.match.sweden{border-color:rgba(255,209,102,.55);box-shadow:0 0 0 1px rgba(255,209,102,.16) inset}
+.mtime{color:var(--blue);font-weight:900;font-size:24px}.mdate{font-size:14px;color:var(--muted);margin-top:4px}
+.teams{font-size:23px;font-weight:850;line-height:1.25}.meta{font-size:15px;color:var(--muted);margin-top:5px}
+.score{text-align:right;font-size:30px;font-weight:950}.status{font-size:13px;border-radius:999px;padding:6px 9px;font-weight:900;display:inline-block;margin-top:5px;background:rgba(102,185,255,.16);color:#d3ecff;border:1px solid rgba(102,185,255,.25)}
+.finished .status{background:#d8e8ff;color:#07101f}.live .status{background:var(--red);color:white;animation:pulse 1.2s infinite}.halftime .status{background:var(--yellow);color:#251a00}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+.nextCard{padding:30px;background:linear-gradient(135deg,rgba(20,76,74,.96),rgba(13,31,55,.88));border-color:rgba(84,227,164,.25)}
+.label{font-size:21px;color:var(--muted);margin-bottom:12px}.big{font-size:33px;font-weight:950;line-height:1.16}.count{font-size:25px;color:var(--green);font-weight:900;margin-top:18px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}.tab{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);color:var(--muted);border-radius:999px;padding:6px 10px;font-size:13px;font-weight:900}.tab.active{background:rgba(102,185,255,.20);color:#fff;border-color:rgba(102,185,255,.35)}
+.table{width:100%;border-collapse:separate;border-spacing:0 8px;font-size:18px}.table th{color:var(--muted);font-size:14px;text-align:left;padding:0 10px 6px}.table td{background:rgba(255,255,255,.055);padding:10px}.table tr td:first-child{border-radius:13px 0 0 13px;color:var(--blue);font-weight:900;width:40px}.table tr td:last-child{border-radius:0 13px 13px 0;text-align:right}.team{font-weight:850}.pts{font-weight:950}
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;overflow:hidden}.result{background:rgba(255,255,255,.055);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,.06)}.rscore{font-size:25px;font-weight:950}.rteams{font-size:17px;font-weight:850;margin-top:6px}.rmeta{font-size:13px;color:var(--muted);margin-top:5px}
+.footer{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:17px}.dot{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 18px var(--green);display:inline-block;margin-right:10px}.loading{font-size:28px;color:var(--muted);padding:30px}.small{font-size:16px;color:var(--muted);margin-top:10px}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <div class="brand"><div class="logo">⚽</div><div><h1>VM 2026</h1><div class="sub">Matcher, resultat och gruppställning</div></div></div>
+  <div class="clock"><div class="time" id="clock">--:--</div><div class="date" id="date">laddar...</div></div>
+</header>
+
+<main>
+  <div class="left">
+    <section class="panel">
+      <div class="head"><div class="title">⚽ Live & dagens matcher</div><div class="badge" id="apiStatus">HÄMTAR DATA</div></div>
+      <div class="content"><div id="matches" class="matchList"><div class="loading">Laddar matcher...</div></div></div>
+    </section>
+    <section class="panel">
+      <div class="head"><div class="title">✅ Senaste resultat</div></div>
+      <div class="content"><div id="results" class="results"></div></div>
+    </section>
+  </div>
+
+  <div class="right">
+    <section class="panel nextCard">
+      <div class="label">Nästa Sveriges match</div>
+      <div class="big" id="nextSweden">Laddar...</div>
+      <div class="count" id="countdown">--</div>
+      <div class="small" id="nextMeta"></div>
+    </section>
+    <section class="panel">
+      <div class="head"><div class="title">📊 Gruppställning</div><div class="badge" id="groupName">Grupp A</div></div>
+      <div class="content">
+        <div class="tabs" id="tabs"></div>
+        <table class="table"><thead><tr><th>#</th><th>Lag</th><th>MS</th><th>+/-</th><th>Poäng</th></tr></thead><tbody id="standings"></tbody></table>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="footer">
+  <div><span class="dot"></span><span id="source">Uppdateras automatiskt varje minut</span></div>
+  <div id="updated">Senast uppdaterad: --:--</div>
+</footer>
+</div>
+
+<script>
+const REFRESH_MS = 60000;
+const API = "https://worldcup26.ir/get";
+const RAW_MATCHES = "https://raw.githubusercontent.com/rezarahiminia/worldcup2026/main/football.matches.json";
+const RAW_GROUPS = "https://raw.githubusercontent.com/rezarahiminia/worldcup2026/main/football.matchtables.json";
+
+const fallbackTeams = {
+ A:["Mexico","South Africa","South Korea","Czechia"],B:["Canada","Switzerland","Qatar","Bosnia and Herzegovina"],
+ C:["Brazil","Morocco","Haiti","Scotland"],D:["United States","Paraguay","Australia","Turkey"],
+ E:["Germany","Curacao","Ivory Coast","Ecuador"],F:["Netherlands","Japan","Sweden","Tunisia"],
+ G:["Belgium","Egypt","Iran","New Zealand"],H:["Spain","Cape Verde","Saudi Arabia","Uruguay"],
+ I:["France","Senegal","Iraq","Norway"],J:["Argentina","Algeria","Austria","Jordan"],
+ K:["Portugal","DR Congo","Uzbekistan","Colombia"],L:["England","Croatia","Ghana","Panama"]
+};
+
+const fallbackMatches = [
+ ["2026-06-25T22:00:00+02:00","Curacao","Ivory Coast","Grupp E"],["2026-06-25T22:00:00+02:00","Ecuador","Germany","Grupp E"],
+ ["2026-06-26T01:00:00+02:00","Japan","Sweden","Grupp F"],["2026-06-26T01:00:00+02:00","Tunisia","Netherlands","Grupp F"],
+ ["2026-06-26T04:00:00+02:00","Turkey","United States","Grupp D"],["2026-06-26T04:00:00+02:00","Paraguay","Australia","Grupp D"],
+ ["2026-06-26T21:00:00+02:00","Norway","France","Grupp I"],["2026-06-26T21:00:00+02:00","Senegal","Iraq","Grupp I"],
+ ["2026-06-27T02:00:00+02:00","Uruguay","Spain","Grupp H"],["2026-06-27T02:00:00+02:00","Cape Verde","Saudi Arabia","Grupp H"],
+ ["2026-06-27T05:00:00+02:00","New Zealand","Belgium","Grupp G"],["2026-06-27T05:00:00+02:00","Egypt","Iran","Grupp G"]
+].map((m,i)=>({id:i,date:m[0],home:m[1],away:m[2],group:m[3],status:"scheduled",homeScore:null,awayScore:null}));
+
+let allMatches=[],groups={},activeGroup="F",nextSwe=null,autoTick=0;
+
+function byId(id){return document.getElementById(id)}
+function tick(){
+ const now=new Date();
+ byId("clock").textContent=now.toLocaleTimeString("sv-SE",{hour:"2-digit",minute:"2-digit"});
+ byId("date").textContent=now.toLocaleDateString("sv-SE",{weekday:"long",day:"numeric",month:"long"});
+ if(nextSwe){
+   const diff=new Date(nextSwe.date)-now;
+   if(diff>0){
+     const d=Math.floor(diff/864e5), h=Math.floor((diff%864e5)/36e5), m=Math.floor((diff%36e5)/6e4);
+     byId("countdown").textContent=(d>0?d+" dagar ":"")+"Startar om "+h+" tim "+m+" min";
+   } else byId("countdown").textContent="Matchen kan vara live eller spelad";
+ }
+}
+setInterval(tick,10000); tick();
+
+async function fetchJson(url){
+ const r=await fetch(url,{cache:"no-store"});
+ if(!r.ok) throw new Error(url+" HTTP "+r.status);
+ return r.json();
+}
+function unwrap(x){
+ if(Array.isArray(x)) return x;
+ if(!x||typeof x!=="object") return [];
+ for(const k of ["data","games","matches","groups","docs","result","items"]){ if(Array.isArray(x[k])) return x[k]; }
+ return [];
+}
+function get(o,keys,def=""){for(const k of keys){if(o&&o[k]!==undefined&&o[k]!==null)return o[k]}return def}
+function teamName(x){
+ if(!x) return "";
+ if(typeof x==="string") return x;
+ return get(x,["name_en","name","team_name","country","title","en"],"");
+}
+function normalizeMatch(g,i){
+ const homeObj=get(g,["homeTeam","home_team","team1","home","localteam","localTeam"],null);
+ const awayObj=get(g,["awayTeam","away_team","team2","away","visitorteam","visitorTeam"],null);
+ const home=teamName(homeObj)||get(g,["home_team_name","homeName","team1_name","homeTeamName","localteam_name"],"TBD");
+ const away=teamName(awayObj)||get(g,["away_team_name","awayName","team2_name","awayTeamName","visitorteam_name"],"TBD");
+ const date=get(g,["date","datetime","kickoff","matchDate","local_date","time","start_time"],fallbackMatches[i%fallbackMatches.length].date);
+ const raw=String(get(g,["status","match_status","state","status_short"],"scheduled")).toLowerCase();
+ let status="scheduled";
+ if(raw.includes("finish")||raw.includes("complete")||raw==="ft"||raw==="finished") status="finished";
+ if(raw.includes("live")||raw.includes("playing")||raw==="1h"||raw==="2h") status="live";
+ if(raw.includes("half")) status="halftime";
+ const hs=get(g,["homeScore","home_score","score1","home_goals","team1_score","localteam_score"],null);
+ const as=get(g,["awayScore","away_score","score2","away_goals","team2_score","visitorteam_score"],null);
+ return {id:get(g,["id","_id","match_id"],i),date,home,away,group:get(g,["group","stage","round","matchday"],""),status,homeScore:hs,awayScore:as,venue:teamName(get(g,["stadium","venue"],null))||get(g,["stadium_name","venue_name"],"")};
+}
+function fallbackGroups(){
+ const out={}; Object.entries(fallbackTeams).forEach(([g,ts])=>out[g]=ts.map((t,i)=>({team:t,played:0,gd:0,pts:0,rank:i+1}))); return out;
+}
+function normalizeGroups(raw){
+ const out={}; const rows=unwrap(raw);
+ if(!rows.length) return fallbackGroups();
+ rows.forEach((g,idx)=>{
+   const letter=String(get(g,["letter","name","group","group_name"],String.fromCharCode(65+idx))).replace(/Group|Grupp/i,"").trim().slice(-1).toUpperCase();
+   const teams=unwrap(get(g,["teams","standings","table","rows"],[]));
+   out[letter]=(teams.length?teams:(fallbackTeams[letter]||[]).map(name=>({team:name}))).map((t,i)=>({
+     team:teamName(get(t,["team"],t))||get(t,["name","team_name"],"Lag"),
+     played:Number(get(t,["played","matches_played","mp","p"],0)),
+     gd:Number(get(t,["goalDifference","goal_difference","gd","diff"],0)),
+     pts:Number(get(t,["points","pts"],0)),
+     rank:Number(get(t,["rank","position"],i+1))
+   }));
+ });
+ return Object.keys(out).length?out:fallbackGroups();
+}
+function fmtTime(d){const x=new Date(d);return isNaN(x)?"--:--":x.toLocaleTimeString("sv-SE",{hour:"2-digit",minute:"2-digit"})}
+function fmtDate(d){const x=new Date(d);return isNaN(x)?"":x.toLocaleDateString("sv-SE",{weekday:"short",day:"numeric",month:"short"})}
+function hasSweden(m){return /sweden|sverige/i.test(m.home+" "+m.away)}
+function scoreOf(m){return (m.homeScore!==null&&m.awayScore!==null&&m.homeScore!==""&&m.awayScore!=="")?`${m.homeScore}–${m.awayScore}`:"–"}
+function renderMatches(){
+ const now=new Date();
+ const sorted=allMatches.slice().sort((a,b)=>new Date(a.date)-new Date(b.date));
+ const todays=sorted.filter(m=>{
+   const d=new Date(m.date);
+   return m.status==="live" || (d.toDateString()===now.toDateString()) || (d>now && d-now<36*3600000);
+ });
+ const list=(todays.length?todays:sorted.filter(m=>new Date(m.date)>now).slice(0,8)).slice(0,8);
+ byId("matches").innerHTML=list.map(m=>{
+   const st=m.status==="live"?"LIVE":m.status==="halftime"?"PAUS":m.status==="finished"?"KLAR":"KOMMANDE";
+   return `<div class="match ${m.status} ${hasSweden(m)?"sweden":""}">
+     <div><div class="mtime">${fmtTime(m.date)}</div><div class="mdate">${fmtDate(m.date)}</div></div>
+     <div><div class="teams">${m.home} – ${m.away}</div><div class="meta">${m.group||""}${m.venue?" · "+m.venue:""}</div></div>
+     <div><div class="score">${scoreOf(m)}</div><span class="status">${st}</span></div>
+   </div>`;
+ }).join("") || `<div class="loading">Inga matcher hittades just nu</div>`;
+ nextSwe=sorted.find(m=>hasSweden(m)&&new Date(m.date)>now&&m.status!=="finished") || sorted.find(m=>hasSweden(m)) || null;
+ byId("nextSweden").textContent=nextSwe?`${nextSwe.home} – ${nextSwe.away}`:"Ingen svensk match hittad";
+ byId("nextMeta").textContent=nextSwe?`${fmtDate(nextSwe.date)} ${fmtTime(nextSwe.date)} · ${nextSwe.group||""}`:"";
+}
+function renderResults(){
+ const finished=allMatches.filter(m=>m.status==="finished" || (m.homeScore!==null&&m.awayScore!==null&&m.homeScore!==""&&m.awayScore!=="")).sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,6);
+ byId("results").innerHTML=finished.length?finished.map(m=>`<div class="result"><div class="rscore">${scoreOf(m)}</div><div class="rteams">${m.home} – ${m.away}</div><div class="rmeta">${fmtDate(m.date)} · ${m.group||""}</div></div>`).join(""):`<div class="result"><div class="rscore">Inga slutresultat ännu</div><div class="rmeta">Resultat visas automatiskt när API:t uppdateras.</div></div>`;
+}
+function renderTabs(){
+ byId("tabs").innerHTML=Object.keys(groups).sort().map(g=>`<button class="tab ${g===activeGroup?"active":""}" onclick="activeGroup='${g}';renderStandings()">${g}</button>`).join("");
+ byId("groupName").textContent="Grupp "+activeGroup;
+}
+function renderStandings(){
+ renderTabs();
+ const rows=(groups[activeGroup]||[]).slice().sort((a,b)=>(b.pts-a.pts)||(b.gd-a.gd)||(a.rank-b.rank));
+ byId("standings").innerHTML=rows.map((r,i)=>`<tr><td>${i+1}</td><td class="team">${r.team}</td><td>${r.played}</td><td>${r.gd}</td><td class="pts">${r.pts}</td></tr>`).join("");
+}
+setInterval(()=>{const keys=Object.keys(groups).sort(); if(keys.length){autoTick=(autoTick+1)%keys.length; activeGroup=keys[autoTick]; renderStandings();}},15000);
+
+async function load(){
+ let used="Live API";
+ try{
+   const [gamesRaw,groupsRaw]=await Promise.all([fetchJson(API+"/games"),fetchJson(API+"/groups")]);
+   allMatches=unwrap(gamesRaw).map(normalizeMatch);
+   groups=normalizeGroups(groupsRaw);
+   if(!allMatches.length) throw new Error("Tom API-respons");
+ }catch(e1){
+   try{
+     const [gamesRaw,groupsRaw]=await Promise.all([fetchJson(RAW_MATCHES),fetchJson(RAW_GROUPS)]);
+     allMatches=unwrap(gamesRaw).map(normalizeMatch);
+     groups=normalizeGroups(groupsRaw);
+     used="GitHub-data";
+   }catch(e2){
+     allMatches=fallbackMatches;
+     groups=fallbackGroups();
+     used="Inbyggt reservschema";
+   }
+ }
+ byId("apiStatus").textContent=used==="Live API"?"LIVE API":used==="GitHub-data"?"GITHUB-DATA":"RESERVDATA";
+ byId("apiStatus").className=used==="Live API"?"badge":"badge warn";
+ byId("source").textContent=used+" · sidan uppdateras varje minut";
+ renderMatches(); renderResults(); renderStandings(); tick();
+ byId("updated").textContent="Senast uppdaterad: "+new Date().toLocaleTimeString("sv-SE",{hour:"2-digit",minute:"2-digit"});
+}
+load(); setInterval(load,REFRESH_MS);
+</script>
+</body>
+</html>
